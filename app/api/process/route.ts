@@ -12,22 +12,16 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 1. Exchange code for access token
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin;
-    const redirectUri = `${baseUrl}/callback`;
+    const redirectUri = "https://oura-share-cgnyd4tp3-stucker-3869s-projects.vercel.app/callback";
     const accessToken = await exchangeCode(code, redirectUri);
 
-    // 2. Pull Oura data
     const rawData = await pullAllData(accessToken);
-
-    // 3. Process
     const { records, allDays } = processData(rawData);
 
     if (allDays.length === 0) {
       return NextResponse.json({ success: false, error: "no_data" });
     }
 
-    // 4. Get patient name from Plato
     let patientName = "Patient";
     try {
       const resp = await fetch(
@@ -40,22 +34,14 @@ export async function GET(request: NextRequest) {
       }
     } catch { /* use default */ }
 
-    // 5. Generate note
     const { note } = generateNote(records, allDays, patientName);
-
-    // 6. Post to Plato
     await postToPlato(pid, note);
 
-    // 7. Revoke token (one-time use)
     try {
       await fetch(`https://api.ouraring.com/oauth/revoke?access_token=${accessToken}`, { method: "POST" });
     } catch { /* non-critical */ }
 
-    return NextResponse.json({
-      success: true,
-      days: allDays.length,
-      patientName,
-    });
+    return NextResponse.json({ success: true, days: allDays.length, patientName });
   } catch (err: any) {
     console.error(`[${pid}] Error:`, err.message);
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
