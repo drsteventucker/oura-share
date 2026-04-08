@@ -38,7 +38,7 @@ export async function exchangeCode(code: string, redirectUri: string): Promise<s
       grant_type: "authorization_code",
       code,
       redirect_uri: redirectUri,
-      client_id: process.env.OURA_CLIENT_ID!,
+      client_id: "36e8de69-ce5f-44dc-bc0b-5bdc144c8e5f",
       client_secret: process.env.OURA_CLIENT_SECRET!,
     }),
   });
