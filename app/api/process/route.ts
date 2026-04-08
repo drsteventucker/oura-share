@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeCode, pullAllData, processData, generateNote, postToPlato } from "@/lib/oura";
+import { lookupPatientHash } from "@/lib/plato";
 
 export const maxDuration = 60;
 
@@ -12,6 +13,19 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // Lookup hash ID and patient name from Plato
+    let patientHash = pid;
+    let patientName = "Patient";
+    try {
+      const lookup = await lookupPatientHash(pid);
+      patientHash = lookup.hash;
+      patientName = lookup.name;
+      console.log("Plato lookup:", pid, "->", patientHash, patientName);
+    } catch (e: any) {
+      // If lookup fails, try using pid directly as hash
+      console.log("Plato lookup failed, using pid as-is:", e.message);
+    }
+
     const accessToken = await exchangeCode(code);
     const rawData = await pullAllData(accessToken);
     const { records, allDays } = processData(rawData);
@@ -20,17 +34,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: "no_data" });
     }
 
-    let patientName = "Patient";
-    try {
-      const resp = await fetch(
-        "https://clinic.platomedical.com/api/" + process.env.PLATO_DB + "/patient/" + pid,
-        { headers: { Authorization: "Bearer " + process.env.PLATO_API_KEY } }
-      );
-      if (resp.ok) { const pt = await resp.json(); patientName = pt.name || "Patient"; }
-    } catch {}
-
     const { note } = generateNote(records, allDays, patientName);
-    await postToPlato(pid, note);
+    await postToPlato(patientHash, note);
 
     try { await fetch("https://api.ouraring.com/oauth/revoke?access_token=" + accessToken, { method: "POST" }); } catch {}
 
