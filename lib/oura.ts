@@ -281,8 +281,8 @@ export function generateNote(
     const late = monthlyStats.slice(-3);
 
     const check = (key: string, label: string, upBad: boolean, threshold: number) => {
-      const earlyVals = early.map((m) => m[key]).filter((v) => v != null) as number[];
-      const lateVals = late.map((m) => m[key]).filter((v) => v != null) as number[];
+      const earlyVals = early.map((m) => (m as any)[key]).filter((v) => v != null) as number[];
+      const lateVals = late.map((m) => (m as any)[key]).filter((v) => v != null) as number[];
       if (earlyVals.length < 3 || lateVals.length < 2) return;
       const earlyAvg = round(mean(earlyVals), 1);
       const lateAvg = round(mean(lateVals), 1);
