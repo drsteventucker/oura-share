@@ -11,25 +11,12 @@ export async function GET(request: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin;
   const redirectUri = `${baseUrl}/callback`;
 
-  const scopes = [
-    "personal",
-    "daily",
-    "heartrate",
-    "session",
-    "spo2",
-    "stress",
-  ].join("+");
+  const ouraUrl = new URL("https://cloud.ouraring.com/oauth/authorize");
+  ouraUrl.searchParams.set("response_type", "code");
+  ouraUrl.searchParams.set("client_id", clientId || "");
+  ouraUrl.searchParams.set("redirect_uri", redirectUri);
+  ouraUrl.searchParams.set("scope", "personal daily heartrate session");
+  ouraUrl.searchParams.set("state", pid);
 
-  // State carries the patient ID through OAuth
-  const state = pid;
-
-  const ouraUrl =
-    `https://cloud.ouraring.com/oauth/authorize` +
-    `?response_type=code` +
-    `&client_id=${clientId}` +
-    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-    `&scope=${scopes}` +
-    `&state=${state}`;
-
-  return NextResponse.redirect(ouraUrl);
+  return NextResponse.redirect(ouraUrl.toString());
 }
