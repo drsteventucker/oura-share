@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { exchangeCode, pullAllData, processData, generateNote, postToPlato } from "@/lib/oura";
+import { pullAllData, processData, generateNote, postToPlato } from "@/lib/oura";
+import { exchangeCode } from "@/lib/exchange";
 
 export const maxDuration = 60;
 
