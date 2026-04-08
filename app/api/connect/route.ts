@@ -7,16 +7,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Missing patient ID" }, { status: 400 });
   }
 
-  const clientId = process.env.OURA_CLIENT_ID;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin;
-  const redirectUri = `${baseUrl}/callback`;
+  const clientId = "36e8de69-ce5f-44dc-bc0b-5bdc144c8e5f";
+  const redirectUri = "https://oura-share-cgnyd4tp3-stucker-3869s-projects.vercel.app/callback";
 
-  const ouraUrl = new URL("https://cloud.ouraring.com/oauth/authorize");
-  ouraUrl.searchParams.set("response_type", "code");
-  ouraUrl.searchParams.set("client_id", clientId || "");
-  ouraUrl.searchParams.set("redirect_uri", redirectUri);
-  ouraUrl.searchParams.set("scope", "personal daily heartrate session");
-  ouraUrl.searchParams.set("state", pid);
+  const ouraUrl = "https://cloud.ouraring.com/oauth/authorize"
+    + "?response_type=code"
+    + "&client_id=" + clientId
+    + "&redirect_uri=" + encodeURIComponent(redirectUri)
+    + "&scope=personal+daily+heartrate+session"
+    + "&state=" + pid;
 
-  return NextResponse.redirect(ouraUrl.toString());
+  return NextResponse.redirect(ouraUrl);
 }
