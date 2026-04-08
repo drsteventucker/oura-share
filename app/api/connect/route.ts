@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   }
 
   const clientId = "36e8de69-ce5f-44dc-bc0b-5bdc144c8e5f";
-  const redirectUri = "https://oura-share-cgnyd4tp3-stucker-3869s-projects.vercel.app/callback";
+  const redirectUri = "https://oura-share-git-main-stucker-3869s-projects.vercel.app/callback";
 
   const ouraUrl = "https://cloud.ouraring.com/oauth/authorize"
     + "?response_type=code"

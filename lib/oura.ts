@@ -1,7 +1,7 @@
 // lib/oura.ts — Oura data pull + processing + Plato POST
 
 const CLIENT_ID = "36e8de69-ce5f-44dc-bc0b-5bdc144c8e5f";
-const CALLBACK = "https://oura-share-cgnyd4tp3-stucker-3869s-projects.vercel.app/callback";
+const CALLBACK = "https://oura-share-git-main-stucker-3869s-projects.vercel.app/callback";
 
 interface DailyRecord {
   date: string;
